@@ -9,11 +9,11 @@ body {
 @layer base {
   :root {
     /* Light Mode */
-    --background: 222 47% 96%; /* #f1f5f9 (light slate) */
+    --background: 0 0% 99.2%; /* #fdfdfd */
     --foreground: 222 47% 11%; /* #0f172a (deep blue) */
-    --card: 222 47% 96%;
+    --card: 0 0% 100%; /* Slightly lighter than background */
     --card-foreground: 222 47% 11%;
-    --popover: 222 47% 96%;
+    --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
     --primary: 239 84% 67%; /* #6366f1 (indigo) - primary accent */
     --primary-foreground: 222 47% 11%;
@@ -23,6 +23,7 @@ body {
     --muted-foreground: 222 47% 44%;
     --accent: 120 100% 50%; /* #00FF00 (vibrant green) */
     --accent-foreground: 222 47% 11%;
+    --accent-pink: 326 84% 61%; /* #ec4899 (pink-500) - new accent */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 222 47% 88%;
@@ -40,7 +41,7 @@ body {
     --speedometer-gradient-to: #f43f5e; /* Red */
 
     /* Sidebar (Can be adjusted if sidebar styles are distinct) */
-    --sidebar-background: 222 47% 94%;
+    --sidebar-background: 0 0% 98%; /* Lighter background for sidebar */
     --sidebar-foreground: 222 47% 11%;
     --sidebar-primary: 239 84% 67%;
     --sidebar-primary-foreground: 0 0% 98%;
@@ -52,11 +53,11 @@ body {
 
   .dark {
     /* Dark Mode */
-    --background: 222 47% 11%; /* #0f172a (deep slate) */
+    --background: 240 5.9% 4.1%; /* #09090b */
     --foreground: 210 40% 98%; /* #f8fafc (off-white) */
-    --card: 222 47% 11%;
+    --card: 240 5.9% 10%; /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
+    --popover: 240 5.9% 10%;
     --popover-foreground: 210 40% 98%;
     --primary: 258 90% 66%; /* #8b5cf6 (violet) - primary accent */
     --primary-foreground: 210 40% 98%;
@@ -66,6 +67,7 @@ body {
     --muted-foreground: 222 47% 65%;
     --accent: 120 100% 50%; /* #00FF00 (vibrant green) */
     --accent-foreground: 222 47% 11%;
+     --accent-pink: 326 84% 61%; /* #ec4899 (pink-500) - new accent */
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 222 47% 25%;
@@ -82,7 +84,7 @@ body {
     --speedometer-gradient-to: #f43f5e; /* Red */
 
     /* Sidebar (Can be adjusted if sidebar styles are distinct) */
-    --sidebar-background: 222 47% 9%;
+    --sidebar-background: 240 5.9% 7%; /* Slightly lighter dark background */
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 258 90% 66%;
     --sidebar-primary-foreground: 0 0% 98%;
@@ -101,7 +103,15 @@ body {
     @apply bg-background text-foreground;
     min-height: 100vh;
     overflow-x: hidden; /* Prevent horizontal scroll */
+    /* Add transition for theme changes */
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
   }
+
+  main {
+     /* Ensure main content also transitions smoothly */
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+
 
   /* Add gradient background to buttons */
   .btn-gradient {
@@ -114,14 +124,23 @@ body {
   background: rgba(255, 255, 255, 0.1); /* Adjust alpha for desired effect */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 10px;
+  border-radius: var(--radius);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  /* Add transition for theme changes */
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
 .dark .glass {
   background: rgba(0, 0, 0, 0.15); /* Adjust alpha for dark mode */
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Card transition */
+.card-transition {
+     /* Apply transition to card elements for theme change */
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
 
 /* Typewriter Effect */
 .typewriter {
@@ -198,4 +217,27 @@ body {
 @keyframes glitch-anim-2 {
   0% { clip-path: polygon(0 35%, 100% 35%, 100% 65%, 0 65%); }
   100% { clip-path: polygon(0 5%, 100% 5%, 100% 25%, 0 25%); }
+}
+
+
+/* Ripple Effect */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background-color: hsla(var(--primary) / 0.5); /* Use primary accent with transparency */
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none; /* Important to allow clicks through */
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }

@@ -1,11 +1,14 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic'; // Import dynamic for client-side only components
+import { useRouter } from 'next/navigation'; // Import useRouter
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { RippleButton } from '@/components/ui/ripple-button'; // Import RippleButton
 
 // Dynamically import react-gauge-chart only on the client-side
 const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
@@ -34,6 +37,7 @@ export default function PreferencesPage() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [readingTime, setReadingTime] = useState<number>(5); // Default 5 minutes
   const [gaugeValue, setGaugeValue] = useState<number>(0); // State for gauge value
+  const router = useRouter(); // Initialize router
 
   useEffect(() => {
     // Update gauge value when readingTime changes
@@ -58,7 +62,8 @@ export default function PreferencesPage() {
    const handleSubmit = () => {
     console.log("Selected Topics:", selectedTopics);
     console.log("Selected Reading Time:", readingTime);
-    // Add submission logic here (e.g., save preferences)
+    // Navigate to the articles grid page
+    router.push('/articles');
   };
 
   return (
@@ -80,7 +85,7 @@ export default function PreferencesPage() {
       >
         {/* Topic Selection */}
         <motion.div variants={itemVariants}>
-            <Card className="h-full glass">
+            <Card className="h-full glass card-transition">
                 <CardHeader>
                 <CardTitle className="text-2xl font-semibold">Choose Your Interests</CardTitle>
                 </CardHeader>
@@ -109,7 +114,7 @@ export default function PreferencesPage() {
 
         {/* Reading Time Selector */}
         <motion.div variants={itemVariants}>
-            <Card className="h-full glass">
+            <Card className="h-full glass card-transition">
                 <CardHeader>
                 <CardTitle className="text-2xl font-semibold">Select Reading Time</CardTitle>
                 </CardHeader>
@@ -161,31 +166,15 @@ export default function PreferencesPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.5 }}
       >
-        <motion.div
-            initial={{ '--gradient-angle': '0deg' } as any}
-            animate={{ '--gradient-angle': '360deg' } as any}
-            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-            style={{
-                border: '2px solid transparent',
-                borderRadius: 'var(--radius)',
-                padding: '2px', // Adjust padding to control border thickness perception
-                background: 'linear-gradient(var(--gradient-angle), hsl(var(--accent)), hsl(var(--primary)), hsl(var(--secondary)))',
-                backgroundClip: 'padding-box, border-box',
-                backgroundOrigin: 'border-box',
-                display: 'inline-block', // Needed for the border gradient effect
-            }}
-            className="inline-block"
-        >
-            <motion.button
+        {/* Use RippleButton for enhanced effect */}
+        <RippleButton
             onClick={handleSubmit}
             className="btn-gradient px-8 py-3 rounded-md text-lg font-semibold shadow-lg"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 400, damping: 10 } }} // Spring bounce
-            >
+            whileHover={{ scale: 1.05, y: -3, transition: { type: 'spring', stiffness: 300, damping: 10 } }} // Bounce on hover
+            whileTap={{ scale: 0.98 }} // Slight scale down on tap (ripple handles main feedback)
+        >
             Let’s Dive, Baby
-            </motion.button>
-        </motion.div>
+        </RippleButton>
       </motion.div>
     </div>
   );

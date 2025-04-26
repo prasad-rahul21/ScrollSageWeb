@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme"; // Import defaultTheme
 
@@ -47,6 +48,11 @@ export default {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
+        'accent-pink': { // Added pink accent color
+           DEFAULT: 'hsl(var(--accent-pink))',
+            // You might want a foreground color for pink too if needed
+           // foreground: 'hsl(var(--accent-pink-foreground))'
+         },
   			popover: {
   				DEFAULT: 'hsl(var(--popover))',
   				foreground: 'hsl(var(--popover-foreground))'
@@ -61,7 +67,12 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+        // Direct color definitions for convenience if needed
+        pink: {
+           '500': '#ec4899', // Added pink-500 directly
+           '600': '#db2777' // Added pink-600 for dark mode if needed
+         },
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -94,6 +105,7 @@ export default {
   },
   plugins: [
     require("tailwindcss-animate"),
+    require('@tailwindcss/typography'), // Add typography plugin
     // Remove require('tailwind-scrollbar')({ nocompatible: true }),
     ],
 } satisfies Config;
