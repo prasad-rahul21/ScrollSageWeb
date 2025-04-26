@@ -17,9 +17,9 @@ export default {
       },
     },
   	extend: {
-       fontFamily: { // Add font family
-         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-         mono: ["var(--font-geist-mono)", ...fontFamily.mono],
+       fontFamily: { // Add font family using CSS variable
+         sans: ["var(--font-sans)", ...fontFamily.sans],
+         // Remove mono font if not used or define similarly
        },
   		colors: {
         border: "hsl(var(--border))",

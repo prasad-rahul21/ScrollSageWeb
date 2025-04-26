@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { Inter } from "next/font/google"; // Use Inter font as a standard web font
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster"; // Import Toaster
-import { Navbar } from "@/components/layout/navbar"; // Import Navbar
+import { Toaster } from "@/components/ui/toaster";
+import { Navbar } from "@/components/layout/navbar";
+
+// Initialize Inter font
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "ScrollSAGE",
@@ -18,21 +20,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* Add font variable and transition class */}
       <body
-        className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}
+        className={`${inter.variable} font-sans antialiased transition-colors duration-300 ease-in-out`}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange
+          disableTransitionOnChange={false} // Enable smooth transitions
         >
           <div className="flex flex-col min-h-screen">
-            <Navbar /> {/* Add Navbar */}
-            <main className="flex-grow"> {/* Ensure main content takes up remaining space */}
+            <Navbar />
+            <main className="flex-grow">
               {children}
             </main>
-            <Toaster /> {/* Add Toaster for notifications */}
+            <Toaster />
           </div>
         </ThemeProvider>
       </body>
