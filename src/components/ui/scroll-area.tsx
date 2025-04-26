@@ -30,17 +30,20 @@ const ScrollBar = React.forwardRef<
   <ScrollAreaPrimitive.ScrollAreaScrollbar
     ref={ref}
     orientation={orientation}
+    // Rely on global CSS for ::-webkit-scrollbar and * scrollbar-width/color
+    // Keep basic layout classes from shadcn
     className={cn(
       "flex touch-none select-none transition-colors",
-      orientation === "vertical" &&
-        "h-full w-2.5 border-l border-l-transparent p-[1px]",
-      orientation === "horizontal" &&
-        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+       // Use minimal width/height, global styles control visual appearance
+      orientation === "vertical" && "h-full w-2 border-l border-l-transparent p-[1px]",
+      orientation === "horizontal" && "h-2 flex-col border-t border-t-transparent p-[1px]",
       className
     )}
     {...props}
   >
-    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+    {/* The thumb's visual style is now primarily controlled by global CSS. */}
+    {/* Make it transparent or use a minimal style that global styles can override. */}
+    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-muted/40" />
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
 ))
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName

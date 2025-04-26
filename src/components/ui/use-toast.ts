@@ -1,3 +1,6 @@
+// NOTE: This is the default shadcn/ui use-toast hook.
+// If you need more advanced toast features, consider using `sonner`.
+
 "use client"
 
 // Inspired by react-hot-toast library
