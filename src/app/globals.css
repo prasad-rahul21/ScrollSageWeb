@@ -34,8 +34,7 @@
     --radius: 0.75rem; /* Slightly more rounded */
     --button-gradient-from: #6366f1; /* Indigo */
     --button-gradient-to: #22d3ee; /* Cyan */
-    /* --speedometer-gradient-from: #22d3ee; /* Cyan */
-    /* --speedometer-gradient-to: #f43f5e; /* Red */ */
+
 
     /* Sidebar (Can be adjusted if sidebar styles are distinct) */
     --sidebar-background: 0 0% 98%; /* Lighter background for sidebar */
@@ -87,8 +86,6 @@
     --chart-5: 120 100% 50%; /* Vibrant Green */
     --button-gradient-from: #7c3aed; /* Purple */
     --button-gradient-to: #06b6d4; /* Cyan */
-    /* --speedometer-gradient-from: #22d3ee; /* Cyan */
-    /* --speedometer-gradient-to: #f43f5e; /* Red */ */
 
     /* Sidebar (Can be adjusted if sidebar styles are distinct) */
     --sidebar-background: 240 5.9% 7%; /* Slightly lighter dark background */
@@ -380,3 +377,5 @@
 .thumb-inner-glow {
    animation: thumb-inner-glow-pulse 2s ease-in-out infinite;
 }
+
+    
