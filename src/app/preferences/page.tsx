@@ -196,17 +196,13 @@ export default function PreferencesPage() {
                 <CardHeader className="text-center pb-4">
                 <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron flex items-center justify-center gap-2"> {/* Keep Orbitron */}
                    <Timer className="w-7 h-7 inline-block"/> ⏳ How Fast You Wanna Fly Through Reads? ⏳
-                </CardTitle>                
+                </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-6 pt-4">
                  {/* Integrate the New Custom Speedometer */}
                   <div className="w-full flex justify-center items-center mb-4">
                        <CustomSpeedometer value={readingTime} minValue={2} maxValue={8} />
                   </div>
-
-                  {/* Remove old text elements */}
-                {/* <p className="text-lg font-medium mb-4 font-sans"> Up to <span className="text-primary font-bold text-xl">{readingTime}</span> minutes </p> */}
-
 
                   <div className="w-full max-w-sm text-center"> {/* Increased max-width */}
                     <Slider
@@ -218,11 +214,11 @@ export default function PreferencesPage() {
                       aria-label="Reading time slider"
                       className="w-full cursor-pointer [&>span:last-child]:hover:scale-110 [&>span:last-child]:transition-transform" // Add hover effect to thumb
                     />
-                     {/* Remove old min/max labels */}
-                    {/* <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                     {/* REMOVED Min/Max labels */}
+                     {/* <div className="flex justify-between text-xs text-muted-foreground mt-2">
                       <span>2 min</span>
                       <span>8 min</span>
-                    </div> */}
+                     </div> */}
                      <p className="text-lg font-medium mt-4 font-sans">
                         Reading time: <span className="text-primary font-bold text-xl">{readingTime}</span> min
                     </p>

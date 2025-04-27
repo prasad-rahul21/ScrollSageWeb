@@ -55,7 +55,7 @@ export function FeaturePlacard({ title, description, icon: Icon, gradient }: Fea
       className="h-full"
     >
       <motion.div variants={hoverVariants} initial="rest" animate="rest" className="h-full relative overflow-hidden">
-         {/* Add Sparkle Effect on Hover */}
+         {/* Add Sparkle Effect on Hover - RESTORED */}
          <motion.div
            className="absolute inset-0 pointer-events-none"
            variants={{
