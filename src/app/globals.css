@@ -49,6 +49,11 @@
     /* Font Variables */
     --font-sans: "Inter", sans-serif; /* Fallback if Inter doesn't load */
     --font-orbitron: "Orbitron", sans-serif; /* Fallback */
+
+    /* Neon Colors for Animation */
+    --neon-indigo: 239 84% 67%;
+    --neon-pink: 326 84% 61%;
+    --neon-cyan: 197 88% 51%;
   }
 
   .dark {
@@ -92,6 +97,11 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 222 47% 22%;
     --sidebar-ring: 258 90% 66%;
+
+    /* Neon Colors for Animation (Dark mode might use same HSL, appearance differs) */
+    --neon-indigo: 239 84% 67%;
+    --neon-pink: 326 84% 61%;
+    --neon-cyan: 197 88% 51%;
   }
 }
 
@@ -249,4 +259,97 @@
     transform: scale(4);
     opacity: 0;
   }
+}
+
+/* Radium Light Strip Animation */
+@keyframes pulse-border {
+  0% { border-color: hsl(var(--neon-indigo)); box-shadow: 0 0 5px hsl(var(--neon-indigo)), 0 0 10px hsl(var(--neon-indigo)), inset 0 0 5px hsl(var(--neon-indigo)); }
+  33% { border-color: hsl(var(--neon-pink)); box-shadow: 0 0 5px hsl(var(--neon-pink)), 0 0 10px hsl(var(--neon-pink)), inset 0 0 5px hsl(var(--neon-pink)); }
+  66% { border-color: hsl(var(--neon-cyan)); box-shadow: 0 0 5px hsl(var(--neon-cyan)), 0 0 10px hsl(var(--neon-cyan)), inset 0 0 5px hsl(var(--neon-cyan)); }
+  100% { border-color: hsl(var(--neon-indigo)); box-shadow: 0 0 5px hsl(var(--neon-indigo)), 0 0 10px hsl(var(--neon-indigo)), inset 0 0 5px hsl(var(--neon-indigo)); }
+}
+
+.pulsating-border {
+  border: 2px solid; /* Initial border setup */
+  animation: pulse-border 4s linear infinite;
+}
+
+/* Sparkle Effect (Revised) */
+.sparkle-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.sparkle {
+    position: absolute;
+    width: 6px; /* Adjust size */
+    height: 6px;
+    background: hsl(var(--secondary)); /* Sparkle color (Yellow) */
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: sparkle-anim 0.8s ease-out forwards;
+    box-shadow: 0 0 4px hsl(var(--secondary)), 0 0 8px hsl(var(--secondary));
+}
+
+@keyframes sparkle-anim {
+    0% { transform: scale(0) rotate(0deg); opacity: 0.5; }
+    50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+    100% { transform: scale(0) rotate(360deg); opacity: 0; }
+}
+
+/* Tiny Particle Bursts */
+.particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: hsl(var(--accent-pink)); /* Particle color */
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: burst-anim 0.6s ease-out forwards;
+}
+
+@keyframes burst-anim {
+    0% { transform: scale(0.5) translate(0, 0); opacity: 1; }
+    100% { transform: scale(1) translate(var(--tx), var(--ty)); opacity: 0; }
+}
+
+/* Breathing Effect */
+@keyframes breathing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); } /* Slight scale up */
+}
+
+.breathing-hover:hover {
+  animation: breathing 1.5s ease-in-out infinite;
+}
+
+/* Ripple Shine Effect */
+.ripple-shine::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.7);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+@keyframes ripple-shine-anim {
+    0% { transform: scale(10) translate(-50%, -50%); opacity: 0.5; }
+    100% { transform: scale(60) translate(-50%, -50%); opacity: 0; } /* Adjust scale for desired spread */
+}
+
+.ripple-shine:hover::after {
+    animation: ripple-shine-anim .8s ease-out;
 }

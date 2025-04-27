@@ -1,12 +1,12 @@
 
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { RippleButton } from '@/components/ui/ripple-button'; // Import RippleButton
-import { Sparkles, Lightbulb, Zap, Target, Bookmark, Settings } from 'lucide-react'; // Example icons
+import { Sparkles, Lightbulb, Zap, Target, Bookmark, Settings, Rocket } from 'lucide-react'; // Added Rocket
 import { FeaturePlacard } from '@/components/feature-placard'; // Import FeaturePlacard
+import { cn } from '@/lib/utils'; // Import cn
 
 const features = [
   {
@@ -41,26 +41,57 @@ const features = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.10, // Stagger placard animation slightly faster
+    },
+  },
+};
+
+// Particle type for burst effect
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  tx: string; // Target x translation
+  ty: string; // Target y translation
+}
+
 
 export function LandingPage() {
   const router = useRouter();
+  const [showSparkles, setShowSparkles] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
-  const handleDiveIn = () => {
-    router.push('/preferences'); // Navigate to the preferences page
+
+  const handleDiveIn = (event: React.MouseEvent<HTMLButtonElement>) => {
+     // Create particles on click
+     const rect = event.currentTarget.getBoundingClientRect();
+     const newParticles: Particle[] = Array.from({ length: 15 }).map((_, i) => ({ // More particles
+        id: Math.random(),
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+        // Random target translation for burst effect
+        tx: `${(Math.random() - 0.5) * 60}px`, // Spread out more
+        ty: `${(Math.random() - 0.5) * 60}px`,
+     }));
+     setParticles(newParticles);
+
+     // Remove particles after animation
+     setTimeout(() => setParticles([]), 600); // Match burst animation duration
+
+     // Navigate after a short delay for the effect
+     setTimeout(() => {
+        router.push('/preferences'); // Navigate to the preferences page
+      }, 200); // Short delay
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15, // Stagger placard animation
-      },
-    },
-  };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center px-4 relative overflow-hidden h-full py-16"> {/* Added padding */}
+    <div className="flex flex-col items-center justify-center text-center px-4 relative overflow-hidden h-full py-16 min-h-[calc(100vh-var(--navbar-height,56px)-theme(spacing.32))]"> {/* Adjusted min-height */}
        {/* Background Animation */}
        <div className="absolute inset-0 z-0 opacity-30 dark:opacity-20">
          <motion.div
@@ -91,35 +122,109 @@ export function LandingPage() {
           Explore a world of articles curated just for you. Let's get started!
         </p>
 
-        {/* Feature Placards Section */}
+        {/* Feature Placards Section - Adjusted Layout */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 w-full max-w-4xl" // Grid for placards
-           variants={containerVariants}
-           initial="hidden"
-           animate="visible"
+            className="w-full max-w-5xl mx-auto" // Constrain width
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
         >
-          {features.map((feature, index) => (
-            <FeaturePlacard
-              key={index}
-              title={feature.title}
-              description={feature.description}
-              icon={feature.icon}
-              gradient={feature.gradient}
-            />
-          ))}
+            {/* First Row - 3 placards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                {features.slice(0, 3).map((feature, index) => (
+                    <FeaturePlacard
+                        key={`top-${index}`}
+                        title={feature.title}
+                        description={feature.description}
+                        icon={feature.icon}
+                        gradient={feature.gradient}
+                    />
+                ))}
+            </div>
+
+            {/* Second Row - 2 placards, centered */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
+                <div className="sm:col-start-1"></div> {/* Empty div for spacing */}
+                {features.slice(3, 5).map((feature, index) => (
+                     <FeaturePlacard
+                        key={`bottom-${index}`}
+                        title={feature.title}
+                        description={feature.description}
+                        icon={feature.icon}
+                        gradient={feature.gradient}
+                    />
+                ))}
+                 <div className="sm:col-start-3"></div> {/* Empty div for spacing */}
+            </div>
         </motion.div>
 
-        {/* Dive In Button */}
-        <RippleButton
+
+        {/* Dive In Button - Enhanced */}
+        <motion.button
             onClick={handleDiveIn}
-            className="btn-gradient px-10 py-4 rounded-full text-xl font-bold shadow-lg flex items-center justify-center gap-2 mx-auto mt-4" // Added margin top
-            whileHover={{ scale: 1.08, y: -4, transition: { type: 'spring', stiffness: 300, damping: 10 } }}
-            whileTap={{ scale: 0.97 }}
+            onMouseEnter={() => setShowSparkles(true)}
+            onMouseLeave={() => setShowSparkles(false)}
+            className={cn(
+                "relative btn-gradient px-10 py-4 rounded-full text-xl font-bold shadow-lg flex items-center justify-center gap-2 mx-auto mt-12", // Increased margin top
+                "pulsating-border", // Apply pulsating border animation
+                "breathing-hover", // Apply breathing effect on hover
+                "ripple-shine" // Apply ripple shine effect on hover
+            )}
+             whileHover={{ scale: 1.05, y: 0 }} // Subtle scale on hover (breathing handles main pulse)
+             whileTap={{ scale: 0.98 }}
+             transition={{ type: 'spring', stiffness: 300, damping: 15 }} // Smoother spring for tap
         >
-           <Sparkles className="w-6 h-6" /> Let’s Dive, Baby! <Sparkles className="w-6 h-6" />
-        </RippleButton>
+           {/* Sparkle Effect Container */}
+             <AnimatePresence>
+               {showSparkles && (
+                 <motion.div
+                     className="sparkle-effect"
+                     initial={{ opacity: 0 }}
+                     animate={{ opacity: 1 }}
+                     exit={{ opacity: 0 }}
+                     transition={{ duration: 0.3 }}
+                 >
+                     {/* Multiple sparkles */}
+                     {[...Array(10)].map((_, i) => (
+                         <motion.div
+                             key={i}
+                             className="sparkle"
+                             style={{
+                                 top: `${Math.random() * 100}%`,
+                                 left: `${Math.random() * 100}%`,
+                                 animationDelay: `${Math.random() * 0.5}s`, // Random delay
+                             }}
+                         />
+                     ))}
+                 </motion.div>
+               )}
+             </AnimatePresence>
+
+            {/* Particle Effect Container */}
+             <AnimatePresence>
+               {particles.map((p) => (
+                 <motion.div
+                   key={p.id}
+                   className="particle"
+                   initial={{ x: p.x, y: p.y, scale: 0.5, opacity: 1 }}
+                   animate={{
+                        x: p.x + parseInt(p.tx, 10),
+                        y: p.y + parseInt(p.ty, 10),
+                        scale: 1,
+                        opacity: 0
+                    }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    style={{ '--tx': p.tx, '--ty': p.ty } as React.CSSProperties} // Pass CSS variables
+                 />
+               ))}
+             </AnimatePresence>
+
+
+            <Rocket className="w-6 h-6" /> {/* Changed icon */}
+                Let's Get Scrolling!
+            <Sparkles className="w-6 h-6" /> {/* Keep one sparkle icon */}
+        </motion.button>
       </motion.div>
     </div>
   );
 }
-

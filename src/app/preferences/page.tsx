@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RippleButton } from '@/components/ui/ripple-button'; // Import RippleButton
+import { Rocket, Sparkles } from 'lucide-react'; // Import icons
 
 // Dynamically import react-gauge-chart only on the client-side
 const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
@@ -17,14 +18,14 @@ const topics = [
   "Technology", "Science", "Health", "Business", "Culture", "Politics", "Sports", "Travel", "Food", "Art"
 ];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } },
+const pageVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }, // Stagger sections
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { opacity: 1, scale: 1 },
+const sectionVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15, duration: 0.5 } },
 };
 
 const buttonVariants = {
@@ -67,37 +68,68 @@ export default function PreferencesPage() {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 min-h-[calc(100vh-var(--navbar-height,56px))]">
-      <motion.h1
-        className="text-4xl font-bold text-center mb-10"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        Customize Your Feed
-      </motion.h1>
-
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
-        variants={cardVariants}
+    <motion.div
+        className="container mx-auto py-12 px-4 min-h-[calc(100vh-var(--navbar-height,56px))] flex flex-col items-center" // Center content vertically
+        variants={pageVariants}
         initial="hidden"
         animate="visible"
+     >
+        {/* Floating elements (Optional Bonus) */}
+        {/* <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            {[...Array(5)].map((_, i) => (
+            <motion.div
+                key={i}
+                className="absolute rounded-full bg-primary/20 dark:bg-primary/30 blur-xl"
+                initial={{
+                    x: `${Math.random() * 100}vw`,
+                    y: `${Math.random() * 100}vh`,
+                    scale: Math.random() * 0.5 + 0.5,
+                }}
+                animate={{
+                    x: `${Math.random() * 100}vw`,
+                    y: `${Math.random() * 100}vh`,
+                }}
+                transition={{
+                    duration: 20 + Math.random() * 10,
+                    repeat: Infinity,
+                    repeatType: 'mirror',
+                    ease: 'easeInOut',
+                }}
+                style={{
+                    width: `${Math.random() * 100 + 50}px`,
+                    height: `${Math.random() * 100 + 50}px`,
+                }}
+            />
+            ))}
+        </div> */}
+
+
+      <motion.h1
+        className="text-4xl md:text-5xl font-bold text-center mb-12 font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent-pink to-secondary" // Use Orbitron font and gradient
+        variants={sectionVariants} // Apply animation variant
       >
-        {/* Topic Selection */}
-        <motion.div variants={itemVariants}>
-            <Card className="h-full glass card-transition">
-                <CardHeader>
-                <CardTitle className="text-2xl font-semibold">Choose Your Interests</CardTitle>
+        ✨ Craft Your ScrollSaga! ✨
+      </motion.h1>
+
+      <div className="w-full max-w-2xl flex flex-col items-center space-y-10"> {/* Increased space */}
+
+        {/* Topic Selection Section */}
+        <motion.div variants={sectionVariants} className="w-full">
+            <Card className="w-full glass card-transition">
+                <CardHeader className="text-center pb-4">
+                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Use Orbitron */}
+                    🔥 Pick What Sparks Your Curiosity! 🔥
+                </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap justify-center gap-3"> {/* Center align buttons */}
                     {topics.map((topic) => (
                     <motion.button
                         key={topic}
                         className={`px-4 py-2 rounded-full border text-sm transition-colors duration-200 ${
                         selectedTopics.includes(topic)
-                            ? 'bg-primary text-primary-foreground border-primary'
-                            : 'bg-background hover:bg-accent hover:text-accent-foreground border-border'
+                            ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                            : 'bg-background hover:bg-accent/80 hover:text-accent-foreground border-border hover:shadow-sm'
                         }`}
                         onClick={() => handleTopicClick(topic)}
                         variants={buttonVariants}
@@ -112,11 +144,13 @@ export default function PreferencesPage() {
             </Card>
         </motion.div>
 
-        {/* Reading Time Selector */}
-        <motion.div variants={itemVariants}>
-            <Card className="h-full glass card-transition">
-                <CardHeader>
-                <CardTitle className="text-2xl font-semibold">Select Reading Time</CardTitle>
+        {/* Reading Time Selector Section */}
+        <motion.div variants={sectionVariants} className="w-full">
+            <Card className="w-full glass card-transition">
+                <CardHeader className="text-center pb-4">
+                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Use Orbitron */}
+                    ⏳ How Fast You Wanna Fly Through Reads? ⏳
+                </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-6 pt-4">
                  <div className='w-full max-w-[300px]'>
@@ -126,7 +160,7 @@ export default function PreferencesPage() {
                             id="gauge-chart"
                             nrOfLevels={20}
                             arcsLength={[0.3, 0.5, 0.2]} // Example segments
-                            colors={["#22D3EE", "#FACC15", "#F43F5E"]} // Cyan -> Yellow -> Red
+                            colors={["hsl(var(--neon-cyan))", "hsl(var(--secondary))", "hsl(var(--accent-pink))"]} // Use theme colors
                             percent={gaugeValue} // Use state variable
                             arcPadding={0.02}
                             textColor="hsl(var(--foreground))" // Use theme color
@@ -138,7 +172,7 @@ export default function PreferencesPage() {
 
                 <div className="w-full max-w-xs text-center">
                     <p className="text-lg font-medium mb-4">
-                    Up to <span className="text-primary font-bold">{readingTime}</span> minutes
+                    Up to <span className="text-primary font-bold text-xl">{readingTime}</span> minutes
                     </p>
                     <Slider
                     defaultValue={[readingTime]}
@@ -147,7 +181,7 @@ export default function PreferencesPage() {
                     step={1}
                     onValueChange={handleSliderChange}
                     aria-label="Reading time slider"
-                    className="w-full"
+                    className="w-full cursor-pointer [&>span:last-child]:hover:scale-110 [&>span:last-child]:transition-transform" // Add hover effect to thumb
                     />
                     <div className="flex justify-between text-xs text-muted-foreground mt-2">
                     <span>2 min</span>
@@ -157,25 +191,26 @@ export default function PreferencesPage() {
                 </CardContent>
             </Card>
         </motion.div>
-      </motion.div>
 
-      {/* Submit Button */}
-      <motion.div
-        className="mt-12 text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-      >
-        {/* Use RippleButton for enhanced effect */}
-        <RippleButton
-            onClick={handleSubmit}
-            className="btn-gradient px-8 py-3 rounded-md text-lg font-semibold shadow-lg"
-            whileHover={{ scale: 1.05, y: -3, transition: { type: 'spring', stiffness: 300, damping: 10 } }} // Bounce on hover
-            whileTap={{ scale: 0.98 }} // Slight scale down on tap (ripple handles main feedback)
+         {/* Submit Button Section */}
+         <motion.div
+            className="mt-8 text-center w-full" // Reduced top margin
+            variants={sectionVariants}
         >
-            Let’s Dive, Baby
-        </RippleButton>
-      </motion.div>
-    </div>
+            {/* Use RippleButton for enhanced effect */}
+            <RippleButton
+                onClick={handleSubmit}
+                className="btn-gradient px-8 py-3 rounded-full text-lg font-semibold shadow-lg inline-flex items-center gap-2" // Ensure flex layout
+                whileHover={{ scale: 1.05, y: -3, transition: { type: 'spring', stiffness: 300, damping: 10 } }} // Bounce on hover
+                whileTap={{ scale: 0.98 }} // Slight scale down on tap (ripple handles main feedback)
+            >
+                 <Rocket className="w-5 h-5" /> {/* Add Rocket icon */}
+                  Unlock Your Feed!
+                 <Sparkles className="w-5 h-5" /> {/* Add Sparkles icon */}
+            </RippleButton>
+         </motion.div>
+
+      </div>
+    </motion.div>
   );
 }

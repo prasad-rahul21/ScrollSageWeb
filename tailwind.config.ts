@@ -101,6 +101,11 @@ export default {
         indigo: { // Add indigo for gradients
           '500': '#6366f1',
          },
+         // Neon Colors (can be direct or HSL)
+         'neon-indigo': '#6366f1', // Example direct hex
+         'neon-pink': '#ec4899',
+         'neon-cyan': '#22d3ee',
+
 
   		},
   		borderRadius: {
@@ -132,13 +137,41 @@ export default {
          'glow': { // Add glow keyframes
            '0%, 100%': { boxShadow: '0 0 5px hsl(var(--primary) / 0.5)' },
            '50%': { boxShadow: '0 0 20px hsl(var(--primary) / 0.8)' },
-         }
+         },
+         'pulse-border': { // Pulsating border keyframes
+            '0%': { borderColor: 'hsl(var(--neon-indigo))', boxShadow: '0 0 5px hsl(var(--neon-indigo)), 0 0 10px hsl(var(--neon-indigo)), inset 0 0 5px hsl(var(--neon-indigo))' },
+            '33%': { borderColor: 'hsl(var(--neon-pink))', boxShadow: '0 0 5px hsl(var(--neon-pink)), 0 0 10px hsl(var(--neon-pink)), inset 0 0 5px hsl(var(--neon-pink))' },
+            '66%': { borderColor: 'hsl(var(--neon-cyan))', boxShadow: '0 0 5px hsl(var(--neon-cyan)), 0 0 10px hsl(var(--neon-cyan)), inset 0 0 5px hsl(var(--neon-cyan))' },
+            '100%': { borderColor: 'hsl(var(--neon-indigo))', boxShadow: '0 0 5px hsl(var(--neon-indigo)), 0 0 10px hsl(var(--neon-indigo)), inset 0 0 5px hsl(var(--neon-indigo))' }
+         },
+        'sparkle-anim': { // Sparkle animation keyframes
+            '0%': { transform: 'scale(0) rotate(0deg)', opacity: '0.5' },
+            '50%': { transform: 'scale(1.2) rotate(180deg)', opacity: '1' },
+            '100%': { transform: 'scale(0) rotate(360deg)', opacity: '0' }
+        },
+        'burst-anim': { // Particle burst keyframes
+            '0%': { transform: 'scale(0.5) translate(0, 0)', opacity: '1' },
+            '100%': { transform: 'scale(1) translate(var(--tx), var(--ty))', opacity: '0' }
+        },
+        'breathing': { // Breathing effect keyframes
+            '0%, 100%': { transform: 'scale(1)' },
+            '50%': { transform: 'scale(1.03)' }
+        },
+        'ripple-shine-anim': { // Ripple shine keyframes
+            '0%': { transform: 'scale(10) translate(-50%, -50%)', opacity: '0.5' },
+            '100%': { transform: 'scale(60) translate(-50%, -50%)', opacity: '0' }
+        }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'sparkle': 'sparkle 1s ease-in-out infinite', // Add sparkle animation
          'glow': 'glow 2s ease-in-out infinite alternate', // Add glow animation
+         'pulse-border': 'pulse-border 4s linear infinite', // Pulsating border animation
+         'sparkle-anim': 'sparkle-anim 0.8s ease-out forwards', // Sparkle animation instance
+         'burst-anim': 'burst-anim 0.6s ease-out forwards', // Burst animation instance
+         'breathing': 'breathing 1.5s ease-in-out infinite', // Breathing animation instance
+         'ripple-shine-anim': 'ripple-shine-anim .8s ease-out' // Ripple shine animation instance
   		}
   	}
   },
@@ -147,3 +180,4 @@ export default {
     require('@tailwindcss/typography'), // Ensure typography plugin is present
     ],
 } satisfies Config;
+
