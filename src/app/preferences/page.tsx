@@ -3,17 +3,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic'; // Import dynamic for client-side only components
-import { useRouter } from 'next/navigation'; // Import useRouter
+// import dynamic from 'next/dynamic'; // No longer needed for gauge chart
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RippleButton } from '@/components/ui/ripple-button'; // Import RippleButton
-import { Rocket, Sparkles, BookOpen, BrainCircuit } from 'lucide-react'; // Import icons
+import { RippleButton } from '@/components/ui/ripple-button';
+import { Rocket, Sparkles, BookOpen, BrainCircuit, Timer } from 'lucide-react'; // Added Timer icon
 import { cn } from '@/lib/utils';
+import { CustomSpeedometer } from '@/components/ui/custom-speedometer'; // Import the new component
 
-// Dynamically import react-gauge-chart only on the client-side
-const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
+// Dynamically import react-gauge-chart only on the client-side - NO LONGER NEEDED
+// const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
 
 const topics = [
   "Technology", "Science", "Health", "Business", "Culture", "Politics", "Sports", "Travel", "Food", "Art"
@@ -54,15 +55,16 @@ const floatingVariants = {
 export default function PreferencesPage() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [readingTime, setReadingTime] = useState<number>(5); // Default 5 minutes
-  const [gaugeValue, setGaugeValue] = useState<number>(0); // State for gauge value
+  // const [gaugeValue, setGaugeValue] = useState<number>(0); // No longer needed for gauge chart
   const router = useRouter(); // Initialize router
 
-  useEffect(() => {
-    // Update gauge value when readingTime changes
-    // Normalize reading time (2-8 min) to gauge scale (0-1)
-    const normalizedValue = (readingTime - 2) / (8 - 2);
-    setGaugeValue(normalizedValue);
-  }, [readingTime]);
+  // No longer needed as GaugeChart is removed
+  // useEffect(() => {
+  //   // Update gauge value when readingTime changes
+  //   // Normalize reading time (2-8 min) to gauge scale (0-1)
+  //   const normalizedValue = (readingTime - 2) / (8 - 2);
+  //   setGaugeValue(normalizedValue);
+  // }, [readingTime]);
 
 
   const handleTopicClick = (topic: string) => {
@@ -192,45 +194,37 @@ export default function PreferencesPage() {
         <motion.div variants={sectionVariants} className="w-full">
             <Card className="w-full glass card-transition shadow-lg">
                 <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Keep Orbitron */}
-                    ⏳ How Fast You Wanna Fly Through Reads? ⏳
+                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron flex items-center justify-center gap-2"> {/* Keep Orbitron */}
+                   <Timer className="w-7 h-7 inline-block"/> ⏳ How Fast You Wanna Fly Through Reads? ⏳
                 </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-6 pt-4">
-                 <div className='w-full max-w-[300px]'>
-                    {/* Conditionally render GaugeChart only on client */}
-                     {typeof window !== 'undefined' && (
-                        <GaugeChart
-                            id="gauge-chart"
-                            nrOfLevels={20}
-                            arcsLength={[0.3, 0.5, 0.2]} // Example segments
-                            colors={["hsl(var(--neon-cyan))", "hsl(var(--secondary))", "hsl(var(--accent-pink))"]} // Use theme colors
-                            percent={gaugeValue} // Use state variable
-                            arcPadding={0.02}
-                            textColor="hsl(var(--foreground))" // Use theme color
-                            needleColor="hsl(var(--muted-foreground))" // Use theme color
-                            needleBaseColor="hsl(var(--muted-foreground))" // Use theme color
-                            />
-                        )}
-                 </div>
+                 {/* Integrate the New Custom Speedometer */}
+                  <div className="w-full flex justify-center items-center mb-4">
+                       <CustomSpeedometer value={readingTime} minValue={2} maxValue={8} />
+                  </div>
 
-                <div className="w-full max-w-xs text-center">
-                     <p className="text-lg font-medium mb-4 font-sans"> {/* Default font */}
-                        Up to <span className="text-primary font-bold text-xl">{readingTime}</span> minutes
-                    </p>
+                  {/* Remove old text elements */}
+                  {/* <p className="text-lg font-medium mb-4 font-sans"> Up to <span className="text-primary font-bold text-xl">{readingTime}</span> minutes </p> */}
+
+                  <div className="w-full max-w-sm text-center"> {/* Increased max-width */}
                     <Slider
-                    defaultValue={[readingTime]}
-                    min={2}
-                    max={8}
-                    step={1}
-                    onValueChange={handleSliderChange}
-                    aria-label="Reading time slider"
-                    className="w-full cursor-pointer [&>span:last-child]:hover:scale-110 [&>span:last-child]:transition-transform" // Add hover effect to thumb
+                      defaultValue={[readingTime]}
+                      min={2}
+                      max={8}
+                      step={1}
+                      onValueChange={handleSliderChange}
+                      aria-label="Reading time slider"
+                      className="w-full cursor-pointer [&>span:last-child]:hover:scale-110 [&>span:last-child]:transition-transform" // Add hover effect to thumb
                     />
-                    <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span>2 min</span>
-                    <span>8 min</span>
-                    </div>
+                     {/* Remove old min/max labels */}
+                    {/* <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                      <span>2 min</span>
+                      <span>8 min</span>
+                    </div> */}
+                     <p className="text-lg font-medium mt-4 font-sans">
+                        Reading time: <span className="text-primary font-bold text-xl">{readingTime}</span> min
+                    </p>
                 </div>
                 </CardContent>
             </Card>

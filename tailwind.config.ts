@@ -94,8 +94,9 @@ export default {
         sky: { // Add sky for gradients
            '400': '#38bdf8',
          },
-        blue: { // Add blue for gradients
+        blue: { // Add blue for gradients and speedometer
           '500': '#3b82f6',
+          '600': '#2563eb', // Example darker blue if needed
          },
         purple: { // Add purple for gradients
            '600': '#9333ea',
