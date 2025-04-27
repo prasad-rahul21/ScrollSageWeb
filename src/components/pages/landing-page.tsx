@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Sparkles, Lightbulb, Zap, Target, Bookmark, Settings, Rocket } from 'lucide-react'; // Added Rocket
 import { FeaturePlacard } from '@/components/feature-placard'; // Import FeaturePlacard
+import { FloatingBackgroundElements } from '@/components/layout/floating-background-elements'; // Import background elements
 import { cn } from '@/lib/utils'; // Import cn
 
 const features = [
@@ -46,7 +47,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15, // Slightly increased stagger for placards
+      staggerChildren: 0.1, // Slightly faster stagger for placards
     },
   },
 };
@@ -91,16 +92,19 @@ export function LandingPage() {
 
 
   return (
-    <div className="flex flex-col items-center justify-center text-center px-4 relative overflow-hidden h-full py-16 min-h-[calc(100vh-var(--navbar-height,56px)-theme(spacing.16))]"> {/* Adjusted bottom padding/margin */}
-       {/* Background Animation */}
-       <div className="absolute inset-0 z-0 opacity-30 dark:opacity-20">
+    <div className="flex flex-col items-center justify-center text-center px-4 relative overflow-hidden h-full py-16 min-h-[calc(100vh-var(--navbar-height,56px)-theme(spacing.16))]">
+       {/* Background Animation & Floating Elements */}
+       <div className="absolute inset-0 z-0 opacity-50 dark:opacity-40">
+         {/* Subtle Gradient Animation */}
          <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/10 to-accent-pink/20 dark:from-primary/30 dark:via-secondary/15 dark:to-accent-pink/30"
+            className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent-pink/10 dark:from-primary/15 dark:via-secondary/10 dark:to-accent-pink/15"
             initial={{ backgroundPosition: '0% 50%' }}
             animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
             style={{ backgroundSize: '400% 400%' }}
          />
+          {/* Floating Interactive Elements */}
+          <FloatingBackgroundElements />
        </div>
 
 
@@ -143,18 +147,20 @@ export function LandingPage() {
             </div>
 
             {/* Bottom Row - 2 placards, centered */}
-            <div className="flex justify-center gap-6 md:gap-8 mt-6 md:mt-8 w-full max-w-2xl"> {/* Use flex, center, constrain width */}
-                 {features.slice(3, 5).map((feature, index) => (
-                     <div className="w-full sm:w-1/2 lg:w-1/3" key={`bottom-${index}`}> {/* Adjust width for spacing */}
+            {/* Adjusted structure for centering the bottom row */}
+            <div className="flex justify-center w-full mt-6 md:mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 w-full max-w-3xl sm:w-2/3"> {/* Control width of the bottom row grid */}
+                     {features.slice(3, 5).map((feature, index) => (
                          <FeaturePlacard
+                            key={`bottom-${index}`}
                             title={feature.title}
                             description={feature.description}
                             icon={feature.icon}
                             gradient={feature.gradient}
                         />
-                    </div>
-                ))}
-            </div>
+                     ))}
+                </div>
+             </div>
         </motion.div>
 
 
