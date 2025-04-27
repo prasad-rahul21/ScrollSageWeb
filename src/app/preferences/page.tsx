@@ -3,18 +3,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-// import dynamic from 'next/dynamic'; // No longer needed for gauge chart
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button'; // RippleButton is used instead
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RippleButton } from '@/components/ui/ripple-button'; // Import RippleButton
-import { Rocket, Sparkles, BookOpen, BrainCircuit, Timer } from 'lucide-react';
+import { Rocket, Sparkles, BookOpen, BrainCircuit, Timer, Settings } from 'lucide-react'; // Added Settings
 import { cn } from '@/lib/utils';
-import { CustomSpeedometer } from '@/components/ui/custom-speedometer'; // Import the new component
-
-// Dynamically import react-gauge-chart only on the client-side - NO LONGER NEEDED
-// const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
+// Removed speedometer import
+// import { CustomSpeedometer } from '@/components/ui/custom-speedometer';
 
 const topics = [
   "Technology", "Science", "Health", "Business", "Culture", "Politics", "Sports", "Travel", "Food", "Art"
@@ -55,16 +52,7 @@ const floatingVariants = {
 export default function PreferencesPage() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [readingTime, setReadingTime] = useState<number>(5); // Default 5 minutes
-  // const [gaugeValue, setGaugeValue] = useState<number>(0); // No longer needed for gauge chart
   const router = useRouter(); // Initialize router
-
-  // No longer needed as GaugeChart is removed
-  // useEffect(() => {
-  //   // Update gauge value when readingTime changes
-  //   // Normalize reading time (2-8 min) to gauge scale (0-1)
-  //   const normalizedValue = (readingTime - 2) / (8 - 2);
-  //   setGaugeValue(normalizedValue);
-  // }, [readingTime]);
 
 
   const handleTopicClick = (topic: string) => {
@@ -161,7 +149,8 @@ export default function PreferencesPage() {
         <motion.div variants={sectionVariants} className="w-full">
             <Card className="w-full glass card-transition shadow-lg">
                 <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Keep Orbitron for this heading */}
+                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron flex items-center justify-center gap-2"> {/* Use Orbitron for this heading */}
+                    <Settings className="w-7 h-7 inline-block text-primary"/> {/* Added Icon */}
                     🔥 Pick What Sparks Your Curiosity! 🔥
                 </CardTitle>
                 </CardHeader>
@@ -194,17 +183,19 @@ export default function PreferencesPage() {
         <motion.div variants={sectionVariants} className="w-full">
             <Card className="w-full glass card-transition shadow-lg">
                 <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron flex items-center justify-center gap-2"> {/* Keep Orbitron */}
-                   <Timer className="w-7 h-7 inline-block"/> ⏳ How Fast You Wanna Fly Through Reads? ⏳
+                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron flex items-center justify-center gap-2"> {/* Use Orbitron */}
+                   <Timer className="w-7 h-7 inline-block text-secondary"/> {/* Added Icon */}
+                   ⏳ How Fast You Wanna Fly Through Reads? ⏳
                 </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-6 pt-4">
-                 {/* Integrate the New Custom Speedometer */}
-                  <div className="w-full flex justify-center items-center mb-4">
+                 {/* REMOVED Speedometer */}
+                  {/* <div className="w-full flex justify-center items-center mb-4">
                        <CustomSpeedometer value={readingTime} minValue={2} maxValue={8} />
-                  </div>
+                  </div> */}
 
-                  <div className="w-full max-w-sm text-center"> {/* Increased max-width */}
+                  {/* Enhanced Slider */}
+                  <div className="w-full max-w-sm text-center pt-6 pb-2"> {/* Added padding top/bottom */}
                     <Slider
                       defaultValue={[readingTime]}
                       min={2}
@@ -212,14 +203,10 @@ export default function PreferencesPage() {
                       step={1}
                       onValueChange={handleSliderChange}
                       aria-label="Reading time slider"
-                      className="w-full cursor-pointer [&>span:last-child]:hover:scale-110 [&>span:last-child]:transition-transform" // Add hover effect to thumb
+                      className="w-full cursor-pointer" // Use custom styles from slider component
                     />
-                     {/* REMOVED Min/Max labels */}
-                     {/* <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                      <span>2 min</span>
-                      <span>8 min</span>
-                     </div> */}
-                     <p className="text-lg font-medium mt-4 font-sans">
+                     {/* Removed Min/Max labels below slider */}
+                     <p className="text-lg font-medium mt-6 font-sans"> {/* Increased margin top */}
                         Reading time: <span className="text-primary font-bold text-xl">{readingTime}</span> min
                     </p>
                 </div>
@@ -249,3 +236,5 @@ export default function PreferencesPage() {
     </motion.div>
   );
 }
+
+    
