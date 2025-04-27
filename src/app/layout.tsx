@@ -1,12 +1,24 @@
+
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // Use Inter font as a standard web font
+import { Inter, Orbitron } from "next/font/google"; // Import Inter and Orbitron
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Navbar } from "@/components/layout/navbar";
+import { cn } from "@/lib/utils"; // Import cn utility
 
-// Initialize Inter font
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+// Initialize fonts
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans", // Keep Inter as the main sans font
+});
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ['400', '700'], // Load necessary weights
+  variable: "--font-orbitron", // Define CSS variable for Orbitron
+});
+
 
 export const metadata: Metadata = {
   title: "ScrollSAGE",
@@ -20,9 +32,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* Add font variable and transition class */}
+      {/* Add font variables and transition class */}
       <body
-        className={`${inter.variable} font-sans antialiased transition-colors duration-300 ease-in-out`}
+        className={cn(
+          "font-sans antialiased transition-colors duration-300 ease-in-out",
+          inter.variable, // Apply Inter variable
+          orbitron.variable // Apply Orbitron variable
+        )}
       >
         <ThemeProvider
           attribute="class"
@@ -42,3 +58,4 @@ export default function RootLayout({
     </html>
   );
 }
+
