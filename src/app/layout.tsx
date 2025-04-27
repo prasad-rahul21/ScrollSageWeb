@@ -1,6 +1,7 @@
 
 import type { Metadata } from "next";
-import { Inter, Orbitron } from "next/font/google"; // Import Inter and Orbitron
+// Import Poppins, Montserrat Alternates, and Orbitron
+import { Poppins, Montserrat_Alternates, Orbitron } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -8,10 +9,18 @@ import { Navbar } from "@/components/layout/navbar";
 import { cn } from "@/lib/utils"; // Import cn utility
 
 // Initialize fonts
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-sans", // Keep Inter as the main sans font
+  weight: ['400', '500', '600', '700', '800'], // Load desired weights
+  variable: "--font-sans", // Use Poppins as the main sans font
 });
+
+const montserratAlternates = Montserrat_Alternates({
+    subsets: ["latin"],
+    weight: ['400', '700'], // Load necessary weights
+    variable: "--font-heading-alt", // Define CSS variable for alternate heading font
+});
+
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -36,7 +45,8 @@ export default function RootLayout({
       <body
         className={cn(
           "font-sans antialiased transition-colors duration-300 ease-in-out",
-          inter.variable, // Apply Inter variable
+          poppins.variable, // Apply Poppins variable
+          montserratAlternates.variable, // Apply Montserrat Alternates variable
           orbitron.variable // Apply Orbitron variable
         )}
       >
