@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RippleButton } from '@/components/ui/ripple-button'; // Import RippleButton
-import { Rocket, Sparkles } from 'lucide-react'; // Import icons
+import { Rocket, Sparkles, BookOpen, BrainCircuit } from 'lucide-react'; // Import icons
+import { cn } from '@/lib/utils';
 
 // Dynamically import react-gauge-chart only on the client-side
 const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
@@ -20,12 +21,12 @@ const topics = [
 
 const pageVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }, // Stagger sections
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }, // Slightly faster stagger
 };
 
 const sectionVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15, duration: 0.5 } },
+  hidden: { opacity: 0, y: 25, scale: 0.98 }, // Subtle start
+  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 90, damping: 14, duration: 0.6 } }, // Adjusted spring
 };
 
 const buttonVariants = {
@@ -33,6 +34,22 @@ const buttonVariants = {
   hover: { scale: 1.05 },
   tap: { scale: 0.95 },
 };
+
+// Optional floating element animation
+const floatingVariants = {
+  animate: (i: number) => ({
+    y: [0, Math.sin(Date.now() / 1000 + i) * 10, 0], // Gentle up and down
+    x: [0, Math.cos(Date.now() / 1200 + i * 0.5) * 8, 0], // Gentle side to side
+    rotate: Math.sin(Date.now() / 1500 + i * 0.2) * 5, // Gentle rotation
+    transition: {
+      duration: 5 + Math.random() * 3, // Slower, varied duration
+      repeat: Infinity,
+      repeatType: "mirror",
+      ease: "easeInOut",
+    },
+  }),
+};
+
 
 export default function PreferencesPage() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
@@ -69,55 +86,80 @@ export default function PreferencesPage() {
 
   return (
     <motion.div
-        className="container mx-auto py-12 px-4 min-h-[calc(100vh-var(--navbar-height,56px))] flex flex-col items-center" // Center content vertically
+        className="container mx-auto py-12 px-4 min-h-[calc(100vh-var(--navbar-height,56px))] flex flex-col items-center relative overflow-hidden" // Added relative and overflow-hidden
         variants={pageVariants}
         initial="hidden"
         animate="visible"
      >
-        {/* Floating elements (Optional Bonus) */}
-        {/* <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-            {[...Array(5)].map((_, i) => (
-            <motion.div
-                key={i}
-                className="absolute rounded-full bg-primary/20 dark:bg-primary/30 blur-xl"
-                initial={{
-                    x: `${Math.random() * 100}vw`,
-                    y: `${Math.random() * 100}vh`,
-                    scale: Math.random() * 0.5 + 0.5,
-                }}
-                animate={{
-                    x: `${Math.random() * 100}vw`,
-                    y: `${Math.random() * 100}vh`,
-                }}
-                transition={{
-                    duration: 20 + Math.random() * 10,
-                    repeat: Infinity,
-                    repeatType: 'mirror',
-                    ease: 'easeInOut',
-                }}
-                style={{
-                    width: `${Math.random() * 100 + 50}px`,
-                    height: `${Math.random() * 100 + 50}px`,
-                }}
-            />
+        {/* Optional Animated Side Elements */}
+        <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block"> {/* Hide on smaller screens */}
+             {/* Left Side Quote */}
+             <motion.div
+                 className="absolute top-1/4 left-8 xl:left-16 max-w-[150px] text-center text-lg font-headingAlt font-bold text-primary/60 dark:text-primary/40"
+                 initial={{ opacity: 0, x: -50 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
+             >
+                  <motion.span
+                    className="block text-3xl mb-2"
+                    animate={{ rotate: [0, -5, 5, 0], transition: { repeat: Infinity, duration: 4, ease: "easeInOut" } }}
+                  >
+                      📚
+                  </motion.span>
+                  Escape Reality, One Scroll at a Time!
+             </motion.div>
+
+             {/* Right Side Quote */}
+             <motion.div
+                 className="absolute top-1/2 right-8 xl:right-16 max-w-[150px] text-center text-lg font-headingAlt font-bold text-secondary/60 dark:text-secondary/50"
+                 initial={{ opacity: 0, x: 50 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 transition={{ delay: 0.7, duration: 0.8, ease: "easeOut" }}
+             >
+                 <motion.span
+                    className="block text-3xl mb-2"
+                     animate={{ scale: [1, 1.1, 1], transition: { repeat: Infinity, duration: 3, ease: "easeInOut" } }}
+                 >
+                     🚀
+                 </motion.span>
+                  Power Up Your Curiosity!
+             </motion.div>
+
+            {/* Floating Icons */}
+             {[BookOpen, BrainCircuit, Sparkles].map((Icon, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute text-primary/30 dark:text-secondary/30"
+                    custom={i} // Pass index to variants
+                    variants={floatingVariants}
+                    animate="animate"
+                    style={{
+                         top: `${10 + Math.random() * 80}%`, // Random vertical position
+                         left: `${5 + Math.random() * 90}%`, // Random horizontal position
+                         scale: 0.6 + Math.random() * 0.6, // Random size
+                    }}
+                >
+                    <Icon size={30 + Math.random() * 30} strokeWidth={1.5} />
+                 </motion.div>
             ))}
-        </div> */}
+        </div>
 
 
       <motion.h1
-        className="text-4xl md:text-5xl font-bold text-center mb-12 font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent-pink to-secondary" // Use Orbitron font and gradient
+        // Apply Montserrat Alternates, make it larger, keep gradient
+        className="text-4xl md:text-5xl lg:text-6xl font-bold font-headingAlt text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent-pink to-secondary"
         variants={sectionVariants} // Apply animation variant
       >
         ✨ Craft Your ScrollSaga! ✨
       </motion.h1>
 
-      <div className="w-full max-w-2xl flex flex-col items-center space-y-10"> {/* Increased space */}
+      <div className="w-full max-w-2xl flex flex-col items-center space-y-10 z-10"> {/* Increased space, ensure content is above bg elements */}
 
         {/* Topic Selection Section */}
         <motion.div variants={sectionVariants} className="w-full">
-            <Card className="w-full glass card-transition">
+            <Card className="w-full glass card-transition shadow-lg">
                 <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Use Orbitron */}
+                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Keep Orbitron for this heading */}
                     🔥 Pick What Sparks Your Curiosity! 🔥
                 </CardTitle>
                 </CardHeader>
@@ -126,11 +168,13 @@ export default function PreferencesPage() {
                     {topics.map((topic) => (
                     <motion.button
                         key={topic}
-                        className={`px-4 py-2 rounded-full border text-sm transition-colors duration-200 ${
-                        selectedTopics.includes(topic)
-                            ? 'bg-primary text-primary-foreground border-primary shadow-md'
-                            : 'bg-background hover:bg-accent/80 hover:text-accent-foreground border-border hover:shadow-sm'
-                        }`}
+                        className={cn(
+                            `px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ease-in-out`, // Use font-medium for better readability
+                            `focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`, // Focus styling
+                            selectedTopics.includes(topic)
+                            ? 'bg-primary text-primary-foreground border-primary shadow-md scale-105' // Scale up selected
+                            : 'bg-background/70 hover:bg-accent/80 hover:text-accent-foreground border-border hover:shadow-sm'
+                        )}
                         onClick={() => handleTopicClick(topic)}
                         variants={buttonVariants}
                         whileHover="hover"
@@ -146,9 +190,9 @@ export default function PreferencesPage() {
 
         {/* Reading Time Selector Section */}
         <motion.div variants={sectionVariants} className="w-full">
-            <Card className="w-full glass card-transition">
+            <Card className="w-full glass card-transition shadow-lg">
                 <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Use Orbitron */}
+                <CardTitle className="text-2xl md:text-3xl font-semibold font-orbitron"> {/* Keep Orbitron */}
                     ⏳ How Fast You Wanna Fly Through Reads? ⏳
                 </CardTitle>
                 </CardHeader>
@@ -171,8 +215,8 @@ export default function PreferencesPage() {
                  </div>
 
                 <div className="w-full max-w-xs text-center">
-                    <p className="text-lg font-medium mb-4">
-                    Up to <span className="text-primary font-bold text-xl">{readingTime}</span> minutes
+                     <p className="text-lg font-medium mb-4 font-sans"> {/* Default font */}
+                        Up to <span className="text-primary font-bold text-xl">{readingTime}</span> minutes
                     </p>
                     <Slider
                     defaultValue={[readingTime]}
@@ -205,7 +249,7 @@ export default function PreferencesPage() {
                 whileTap={{ scale: 0.98 }} // Slight scale down on tap (ripple handles main feedback)
             >
                  <Rocket className="w-5 h-5" /> {/* Add Rocket icon */}
-                  Unlock Your Feed!
+                  Unlock Your Feed! {/* Updated Text */}
                  <Sparkles className="w-5 h-5" /> {/* Add Sparkles icon */}
             </RippleButton>
          </motion.div>

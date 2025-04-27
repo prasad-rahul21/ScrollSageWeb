@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils'; // Import cn
 
 const features = [
   {
-    title: "Read Engaging Articles",
-    description: "Discover content perfectly matched to your interests.",
+    title: "Engaging Articles", // Simplified title
+    description: "Discover content matched to your interests.",
     icon: Zap,
     gradient: "from-indigo-500 to-purple-600",
   },
@@ -22,19 +22,19 @@ const features = [
     gradient: "from-pink-500 to-rose-500",
   },
     {
-    title: "Customize Your Feed",
+    title: "Customize Feed", // Simplified title
     description: "Tailor topics and reading time for a perfect fit.",
     icon: Settings,
     gradient: "from-teal-400 to-cyan-500",
    },
   {
-    title: "Save Your Favorites",
+    title: "Save Favorites", // Simplified title
     description: "Bookmark articles and build your knowledge library.",
     icon: Bookmark,
     gradient: "from-amber-400 to-orange-500",
   },
   {
-    title: "AI Summaries (Coming Soon!)",
+    title: "AI Summaries", // Simplified title
     description: "Instantly grasp key points with intelligent summaries.",
     icon: Target, // Or a brain/AI icon
     gradient: "from-sky-400 to-blue-500",
@@ -46,7 +46,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.10, // Stagger placard animation slightly faster
+      staggerChildren: 0.15, // Slightly increased stagger for placards
     },
   },
 };
@@ -91,7 +91,7 @@ export function LandingPage() {
 
 
   return (
-    <div className="flex flex-col items-center justify-center text-center px-4 relative overflow-hidden h-full py-16 min-h-[calc(100vh-var(--navbar-height,56px)-theme(spacing.32))]"> {/* Adjusted min-height */}
+    <div className="flex flex-col items-center justify-center text-center px-4 relative overflow-hidden h-full py-16 min-h-[calc(100vh-var(--navbar-height,56px)-theme(spacing.16))]"> {/* Adjusted bottom padding/margin */}
        {/* Background Animation */}
        <div className="absolute inset-0 z-0 opacity-30 dark:opacity-20">
          <motion.div
@@ -105,7 +105,7 @@ export function LandingPage() {
 
 
        <motion.div
-        className="relative z-10 flex flex-col items-center" // Center content
+        className="relative z-10 flex flex-col items-center w-full" // Ensure full width for centering
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -118,19 +118,19 @@ export function LandingPage() {
         >
           Ready to Dive In?
         </motion.h1>
-         <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"> {/* Reduced margin bottom */}
+         <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"> {/* Increased margin bottom */}
           Explore a world of articles curated just for you. Let's get started!
         </p>
 
-        {/* Feature Placards Section - Adjusted Layout */}
+        {/* Feature Placards Section - Inverted Pyramid Layout */}
         <motion.div
-            className="w-full max-w-5xl mx-auto" // Constrain width
+            className="w-full max-w-5xl mx-auto flex flex-col items-center" // Use flex column for centering rows
             variants={containerVariants}
             initial="hidden"
             animate="visible"
         >
-            {/* First Row - 3 placards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+            {/* Top Row - 3 placards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 w-full">
                 {features.slice(0, 3).map((feature, index) => (
                     <FeaturePlacard
                         key={`top-${index}`}
@@ -142,19 +142,18 @@ export function LandingPage() {
                 ))}
             </div>
 
-            {/* Second Row - 2 placards, centered */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
-                <div className="sm:col-start-1"></div> {/* Empty div for spacing */}
-                {features.slice(3, 5).map((feature, index) => (
-                     <FeaturePlacard
-                        key={`bottom-${index}`}
-                        title={feature.title}
-                        description={feature.description}
-                        icon={feature.icon}
-                        gradient={feature.gradient}
-                    />
+            {/* Bottom Row - 2 placards, centered */}
+            <div className="flex justify-center gap-6 md:gap-8 mt-6 md:mt-8 w-full max-w-2xl"> {/* Use flex, center, constrain width */}
+                 {features.slice(3, 5).map((feature, index) => (
+                     <div className="w-full sm:w-1/2 lg:w-1/3" key={`bottom-${index}`}> {/* Adjust width for spacing */}
+                         <FeaturePlacard
+                            title={feature.title}
+                            description={feature.description}
+                            icon={feature.icon}
+                            gradient={feature.gradient}
+                        />
+                    </div>
                 ))}
-                 <div className="sm:col-start-3"></div> {/* Empty div for spacing */}
             </div>
         </motion.div>
 
@@ -165,7 +164,7 @@ export function LandingPage() {
             onMouseEnter={() => setShowSparkles(true)}
             onMouseLeave={() => setShowSparkles(false)}
             className={cn(
-                "relative btn-gradient px-10 py-4 rounded-full text-xl font-bold shadow-lg flex items-center justify-center gap-2 mx-auto mt-12", // Increased margin top
+                "relative btn-gradient px-10 py-4 rounded-full text-xl font-bold shadow-lg flex items-center justify-center gap-2 mx-auto mt-16", // Increased margin top further
                 "pulsating-border", // Apply pulsating border animation
                 "breathing-hover", // Apply breathing effect on hover
                 "ripple-shine" // Apply ripple shine effect on hover

@@ -29,11 +29,13 @@ const placardVariants = {
 };
 
 const hoverVariants = {
-  rest: { scale: 1, y: 0, filter: "brightness(1)" },
+  rest: { scale: 1, y: 0, filter: "brightness(1)", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }, // Adjusted base shadow
   hover: {
-    scale: 1.05,
-    y: -5,
+    scale: 1.04, // Slightly less scale
+    y: -4,      // Slightly less lift
     filter: "brightness(1.1)", // Slight brighten on hover
+    // Subtle glow effect using boxShadow with accent colors
+    boxShadow: "0 10px 20px -5px hsla(var(--primary)/0.3), 0 0 10px 0px hsla(var(--accent-pink)/0.2)",
     transition: { type: 'spring', stiffness: 300, damping: 10 }
   },
 };
@@ -46,13 +48,13 @@ const iconVariants = {
 export function FeaturePlacard({ title, description, icon: Icon, gradient }: FeaturePlacardProps) {
   return (
     <motion.div
-      variants={placardVariants}
+      variants={placardVariants} // Apply entrance animation variant
       whileHover="hover"
-      initial="rest"
-      animate="rest"
+      initial="hidden" // Start hidden for entrance animation
+      animate="visible" // Animate to visible state
       className="h-full"
     >
-      <motion.div variants={hoverVariants} className="h-full relative overflow-hidden">
+      <motion.div variants={hoverVariants} initial="rest" animate="rest" className="h-full relative overflow-hidden">
          {/* Add Sparkle Effect on Hover */}
          <motion.div
            className="absolute inset-0 pointer-events-none"
@@ -65,7 +67,7 @@ export function FeaturePlacard({ title, description, icon: Icon, gradient }: Fea
              {[...Array(5)].map((_, i) => (
                  <motion.div
                      key={i}
-                     className="absolute text-yellow-300/70 text-xl"
+                     className="absolute text-yellow-300/70 text-xl" // Using secondary for sparkle
                      style={{
                          top: `${Math.random() * 80 + 10}%`, // Random position
                          left: `${Math.random() * 80 + 10}%`,
@@ -88,7 +90,7 @@ export function FeaturePlacard({ title, description, icon: Icon, gradient }: Fea
          </motion.div>
 
         <Card className={cn(
-          "h-full flex flex-col text-white shadow-lg card-transition overflow-hidden",
+          "h-full flex flex-col text-white shadow-md card-transition overflow-hidden", // Use shadow-md as base
           `bg-gradient-to-br ${gradient}` // Apply gradient background
         )}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

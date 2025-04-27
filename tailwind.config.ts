@@ -19,8 +19,9 @@ export default {
     },
   	extend: {
        fontFamily: { // Add font family using CSS variable
-         sans: ["var(--font-sans)", ...fontFamily.sans],
-         orbitron: ["var(--font-orbitron)", ...fontFamily.sans], // Add Orbitron font family
+         sans: ["var(--font-sans)", ...fontFamily.sans], // Poppins is now default sans
+         orbitron: ["var(--font-orbitron)", ...fontFamily.sans], // Orbitron
+         headingAlt: ["var(--font-heading-alt)", ...fontFamily.sans], // Montserrat Alternates
        },
   		colors: {
         border: "hsl(var(--border))",
@@ -79,6 +80,7 @@ export default {
          },
         cyan: { // Add cyan for gradients
            '500': '#06b6d4',
+           '400': '#22d3ee', // Added cyan-400 for neon
          },
         amber: { // Add amber for gradients
           '400': '#fbbf24',
@@ -102,9 +104,9 @@ export default {
           '500': '#6366f1',
          },
          // Neon Colors (can be direct or HSL)
-         'neon-indigo': '#6366f1', // Example direct hex
-         'neon-pink': '#ec4899',
-         'neon-cyan': '#22d3ee',
+         'neon-indigo': 'hsl(var(--neon-indigo))', // Use HSL var
+         'neon-pink': 'hsl(var(--neon-pink))',
+         'neon-cyan': 'hsl(var(--neon-cyan))',
 
 
   		},
@@ -180,4 +182,3 @@ export default {
     require('@tailwindcss/typography'), // Ensure typography plugin is present
     ],
 } satisfies Config;
-
