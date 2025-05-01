@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Navbar } from "@/components/layout/navbar";
 import { cn } from "@/lib/utils"; // Import cn utility
+import { ReduxProvider } from "@/components/redux-provider"; // Import ReduxProvider
 
 // Initialize fonts
 const poppins = Poppins({
@@ -50,22 +51,23 @@ export default function RootLayout({
           orbitron.variable // Apply Orbitron variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange={false} // Enable smooth transitions
-        >
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Toaster />
-          </div>
-        </ThemeProvider>
+        <ReduxProvider> {/* Wrap with ReduxProvider */}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange={false} // Enable smooth transitions
+          >
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Toaster />
+            </div>
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
 }
-

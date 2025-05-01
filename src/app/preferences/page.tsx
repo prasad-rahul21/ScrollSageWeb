@@ -4,10 +4,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Import AnimatePresence
 import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux'; // Import Redux hooks
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RippleButton } from '@/components/ui/ripple-button';
-import { Rocket, Sparkles, BookOpen, BrainCircuit, Timer, Settings, AlertCircle, Wand2 } from 'lucide-react'; // Added Settings, AlertCircle, Wand2
+import { Rocket, Sparkles, BookOpen, BrainCircuit, Timer, Settings, AlertCircle, Wand2, Loader2 } from 'lucide-react'; // Added Settings, AlertCircle, Wand2, Loader2
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -15,10 +16,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"; // Import Tooltip components
+import { fetchTags } from '@/redux/tags/actions'; // Import fetchTags action
+import type { RootState } from '@/redux/rootReducer'; // Import RootState type
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
-const topics = [
-  "Technology", "Science", "Health", "Business", "Culture", "Politics", "Sports", "Travel", "Food", "Art"
-];
+// REMOVED static topics array
 
 const pageVariants = {
     hidden: { opacity: 0 },
@@ -67,7 +69,6 @@ const messageVariants = {
     }
 };
 
-// REMOVED: const defaultMessage = "Your scroll-fate awaits... choose wisely, wanderer 🧙‍♂️";
 const validationWarningMessage = "Your scroll-fate awaits... choose at least one magical tag, wanderer! 🧙‍♂️";
 const maxTopicsWarningMessage = "Whoa there, overachiever! Only 3 passions allowed 😎";
 
@@ -77,7 +78,18 @@ export default function PreferencesPage() {
   const router = useRouter();
   const [topicMessage, setTopicMessage] = useState<string>(''); // Initial state is empty
   const [animateMessage, setAnimateMessage] = useState<string>('visible'); // For triggering animation
+
+  // Redux state and dispatch
+  const dispatch = useDispatch();
+  const { tags: fetchedTopics, loading: tagsLoading, error: tagsError } = useSelector((state: RootState) => state.tagsState);
+
   const isSubmitDisabled = selectedTopics.length === 0;
+
+  // Fetch tags when the component mounts
+  useEffect(() => {
+    dispatch(fetchTags());
+  }, [dispatch]);
+
 
   const handleTopicClick = (topic: string) => {
     const isSelected = selectedTopics.includes(topic);
@@ -88,12 +100,20 @@ export default function PreferencesPage() {
     if (isSelected) {
       setSelectedTopics((prev) => prev.filter((t) => t !== topic));
       // Clear any warning message when removing a tag
-      nextMessage = '';
+      if (topicMessage === maxTopicsWarningMessage || topicMessage === validationWarningMessage) {
+        nextMessage = '';
+      } else {
+        nextMessage = topicMessage; // Keep existing message if not a warning
+      }
     } else {
       if (selectedTopics.length < maxTopics) {
         setSelectedTopics((prev) => [...prev, topic]);
         // Clear any warning message when adding a valid tag
-        nextMessage = '';
+         if (topicMessage === validationWarningMessage) {
+           nextMessage = '';
+         } else {
+           nextMessage = topicMessage; // Keep max warning if it was shown
+         }
       } else {
         // Limit reached
         nextMessage = maxTopicsWarningMessage;
@@ -102,20 +122,6 @@ export default function PreferencesPage() {
         setTimeout(() => setAnimateMessage('visible'), 400);
       }
     }
-    // If the validation warning was previously shown, ensure it's cleared now
-    if (topicMessage === validationWarningMessage && selectedTopics.length > 0) {
-       nextMessage = '';
-    } else if (topicMessage === maxTopicsWarningMessage && selectedTopics.length < maxTopics && !isSelected) {
-        // If max warning was shown but now we are below max, clear it
-        nextMessage = '';
-    } else if (topicMessage === maxTopicsWarningMessage && isSelected) {
-         // If removing a tag while max warning is shown, clear it
-         nextMessage = '';
-    } else if (topicMessage === maxTopicsWarningMessage && !isSelected && selectedTopics.length >= maxTopics) {
-        // If trying to add beyond max, keep the max message
-        nextMessage = maxTopicsWarningMessage;
-    }
-
 
      setTopicMessage(nextMessage);
      setAnimateMessage(nextAnimation);
@@ -231,7 +237,7 @@ export default function PreferencesPage() {
                                      "text-sm mt-3 font-medium min-h-[20px]", // Added min-height to prevent layout shift
                                      topicMessage === validationWarningMessage || topicMessage === maxTopicsWarningMessage
                                          ? "text-destructive font-semibold" // Red and bold for warnings
-                                         : "text-accent-pink dark:text-secondary" // Default (shouldn't be used now)
+                                         : "text-muted-foreground" // Default color for non-warning messages (if any)
                                  )}
                                  variants={messageVariants}
                                  initial="hidden"
@@ -247,7 +253,16 @@ export default function PreferencesPage() {
                 </CardHeader>
                 <CardContent className="pt-0"> {/* Adjusted padding top */}
                     <div className="flex flex-wrap justify-center gap-3">
-                        {topics.map((topic) => (
+                        {tagsLoading && (
+                            // Show skeleton loaders while tags are loading
+                            Array.from({ length: 10 }).map((_, index) => (
+                                <Skeleton key={index} className="h-8 w-24 rounded-full" />
+                            ))
+                        )}
+                         {tagsError && (
+                           <p className="text-destructive text-center w-full">Failed to load tags. Please try again later.</p>
+                         )}
+                        {!tagsLoading && !tagsError && fetchedTopics.map((topic) => (
                             <motion.button
                                 key={topic}
                                 className={cn(
@@ -337,4 +352,3 @@ export default function PreferencesPage() {
     </motion.div>
   );
 }
-
