@@ -1,68 +1,13 @@
 
 export interface Article {
-  id: string;
+  id: string; // Changed to string to match potential API responses or leave as number if db uses number
   title: string;
   summary: string;
   readingTime: number; // in minutes
-  coinsOffered: number;
+  coinsOffered?: number; // Made optional as it might not always be present
+  tags?: string[]; // Added tags array, optional
   // Add other relevant fields like author, fullContent, publishDate, etc.
 }
 
-export const sampleArticles: Article[] = [
-  {
-    id: "ai-future-1",
-    title: "The Unfolding Future of Artificial Intelligence",
-    summary: "Explore the rapid advancements in AI, its potential impact on various industries, and the ethical considerations we must address.",
-    readingTime: 6,
-    coinsOffered: 15,
-  },
-  {
-    id: "react-hooks-deep-dive-2",
-    title: "Mastering React Hooks: A Comprehensive Guide",
-    summary: "Unlock the full potential of React functional components with this in-depth exploration of Hooks like useState, useEffect, useContext, and custom hooks.",
-    readingTime: 8,
-    coinsOffered: 20,
-  },
-  {
-    id: "sustainable-living-3",
-    title: "Simple Steps Towards Sustainable Living",
-    summary: "Discover practical and easy-to-implement habits that reduce your environmental footprint and contribute to a healthier planet.",
-    readingTime: 4,
-    coinsOffered: 10,
-  },
-   {
-    id: "mindfulness-art-4",
-    title: "The Art of Mindfulness: Cultivating Presence",
-    summary: "Learn powerful techniques to practice mindfulness, reduce stress, enhance focus, and live more fully in the present moment.",
-    readingTime: 5,
-    coinsOffered: 12,
-  },
-   {
-    id: "quantum-computing-intro-5",
-    title: "Decoding Quantum Computing: An Introduction",
-    summary: "Step into the fascinating world of quantum mechanics and explore the principles behind quantum computing and its potential applications.",
-    readingTime: 7,
-    coinsOffered: 18,
-  },
-   {
-    id: "future-web-dev-6",
-    title: "Trends Shaping the Future of Web Development",
-    summary: "Stay ahead of the curve by understanding the key technologies and methodologies that are defining the next generation of web applications.",
-    readingTime: 5,
-    coinsOffered: 14,
-  },
-   {
-    id: "healthy-eating-7",
-    title: "A Beginner's Guide to Healthy Eating Habits",
-    summary: "Learn the fundamentals of balanced nutrition and how to make simple, sustainable changes to your diet for better health and well-being.",
-    readingTime: 4,
-    coinsOffered: 9,
-  },
-   {
-    id: "travel-budget-8",
-    title: "Traveling the World on a Budget: Tips & Tricks",
-    summary: "Explore practical strategies for saving money on flights, accommodation, and activities, making your dream trip a reality without breaking the bank.",
-    readingTime: 6,
-    coinsOffered: 16,
-  },
-];
+// Removed the sampleArticles array as data is now sourced from the mock API (dbAll.json)
+// export const sampleArticles: Article[] = [ ... ];

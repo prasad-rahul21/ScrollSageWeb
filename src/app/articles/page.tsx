@@ -4,10 +4,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useSelector } from 'react-redux'; // Import useSelector
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Coins, Newspaper } from 'lucide-react';
-import { sampleArticles, type Article } from '@/data/sample-articles'; // Import sample data and type
+import { Clock, Coins, Newspaper, Loader2, AlertTriangle } from 'lucide-react';
+// import { sampleArticles, type Article } from '@/data/sample-articles'; // Remove sample data import
+import type { RootState } from '@/redux/rootReducer'; // Import RootState type
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton for loading state
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -43,7 +46,8 @@ const cardHoverVariants = {
 };
 
 export default function ArticlesGridPage() {
-  const articles: Article[] = sampleArticles; // Use sample data
+  // Get articles data from Redux store
+  const { articles, loading, error } = useSelector((state: RootState) => state.articlesState);
 
   return (
     <div className="container mx-auto py-12 px-4 min-h-[calc(100vh-var(--navbar-height,56px))]">
@@ -56,16 +60,66 @@ export default function ArticlesGridPage() {
         <Newspaper className="w-8 h-8 text-primary" /> Handpicked Reads, Just for You ✨
       </motion.h1>
 
-      {articles.length === 0 ? (
+      {loading && (
+          // Loading State with Skeletons
+          <motion.div
+             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+             variants={containerVariants}
+             initial="hidden"
+             animate="visible"
+           >
+            {Array.from({ length: 6 }).map((_, index) => ( // Show 6 skeletons
+              <motion.div key={index} variants={itemVariants}>
+                <Card className="h-full flex flex-col overflow-hidden shadow-md card-transition glass">
+                   <CardHeader className="pb-3">
+                     <Skeleton className="h-5 w-3/4 rounded" />
+                   </CardHeader>
+                   <CardContent className="flex-grow pb-4 space-y-2">
+                     <Skeleton className="h-4 w-full rounded" />
+                     <Skeleton className="h-4 w-5/6 rounded" />
+                     <Skeleton className="h-4 w-4/6 rounded" />
+                   </CardContent>
+                   <CardFooter className="flex justify-between items-center text-xs border-t pt-3 mt-auto">
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                      <Skeleton className="h-5 w-20 rounded-full" />
+                   </CardFooter>
+                 </Card>
+              </motion.div>
+             ))}
+          </motion.div>
+      )}
+
+      {error && (
+          // Error State
+          <motion.div
+            className="text-center text-destructive mt-20 text-lg flex flex-col items-center gap-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+             <AlertTriangle className="w-12 h-12" />
+             <p className="font-semibold">Oops! Couldn't fetch your articles.</p>
+             <p className="text-sm text-muted-foreground">Please check your connection or try refreshing.</p>
+             {/* Optional: Add a retry button */}
+             {/* <Button onClick={() => dispatch(fetchArticles(...))} variant="outline" size="sm" className="mt-4">
+                <RotateCw className="mr-2 h-4 w-4"/> Retry
+             </Button> */}
+          </motion.div>
+       )}
+
+      {!loading && !error && articles.length === 0 && (
+         // Empty State (No articles match)
          <motion.div
           className="text-center text-muted-foreground mt-20 text-lg"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
          >
-           No articles match your preferences yet. Try adjusting them!
+           No articles match your preferences yet. Try adjusting them in the Preferences page!
          </motion.div>
-      ) : (
+      )}
+
+      {!loading && !error && articles.length > 0 && (
+        // Display Articles Grid
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
           variants={containerVariants}
@@ -108,7 +162,7 @@ export default function ArticlesGridPage() {
                       </Badge>
                        <Badge variant="outline" className="flex items-center gap-1 bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/30">
                         <Coins className="w-3 h-3" />
-                        {article.coinsOffered} Coins
+                        {article.coinsOffered || 0} Coins {/* Add default 0 if coinsOffered is missing */}
                       </Badge>
                     </CardFooter>
                   </Card>

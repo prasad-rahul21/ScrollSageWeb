@@ -17,10 +17,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"; // Import Tooltip components
 import { fetchTags } from '@/redux/tags/actions'; // Import fetchTags action
+import { fetchArticles } from '@/redux/articles/actions'; // Import fetchArticles action
 import type { RootState } from '@/redux/rootReducer'; // Import RootState type
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
-// REMOVED static topics array
 
 const pageVariants = {
     hidden: { opacity: 0 },
@@ -143,9 +143,9 @@ export default function PreferencesPage() {
 
      // If validation passes, clear message and proceed
      setTopicMessage(''); // Clear message on successful submit
-     console.log("Selected Topics:", selectedTopics);
-     console.log("Selected Reading Time:", readingTime);
-     router.push('/articles');
+     console.log("Dispatching fetchArticles with:", { selectedTags: selectedTopics, readingTime });
+     dispatch(fetchArticles({ selectedTags: selectedTopics, readingTime }));
+     router.push('/articles'); // Navigate to the articles grid page
    };
 
     // Effect to clear validation warning if user selects a tag after seeing it
