@@ -67,7 +67,7 @@ const messageVariants = {
     }
 };
 
-const defaultMessage = "Your scroll-fate awaits... choose wisely, wanderer 🧙‍♂️";
+// REMOVED: const defaultMessage = "Your scroll-fate awaits... choose wisely, wanderer 🧙‍♂️";
 const validationWarningMessage = "Your scroll-fate awaits... choose at least one magical tag, wanderer! 🧙‍♂️";
 const maxTopicsWarningMessage = "Whoa there, overachiever! Only 3 passions allowed 😎";
 
@@ -75,33 +75,25 @@ export default function PreferencesPage() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [readingTime, setReadingTime] = useState<number>(5);
   const router = useRouter();
-  const [topicMessage, setTopicMessage] = useState<string>(defaultMessage);
+  const [topicMessage, setTopicMessage] = useState<string>(''); // Initial state is empty
   const [animateMessage, setAnimateMessage] = useState<string>('visible'); // For triggering animation
   const isSubmitDisabled = selectedTopics.length === 0;
 
   const handleTopicClick = (topic: string) => {
     const isSelected = selectedTopics.includes(topic);
     const maxTopics = 3;
-    let nextMessage = defaultMessage;
+    let nextMessage = ''; // Default to empty message
     let nextAnimation = 'visible';
 
     if (isSelected) {
       setSelectedTopics((prev) => prev.filter((t) => t !== topic));
-      // Message remains default unless validation was shown
-      if (topicMessage === validationWarningMessage || topicMessage === maxTopicsWarningMessage) {
-          nextMessage = defaultMessage;
-      } else {
-          nextMessage = topicMessage; // Keep current if it wasn't a warning
-      }
+      // Clear any warning message when removing a tag
+      nextMessage = '';
     } else {
       if (selectedTopics.length < maxTopics) {
         setSelectedTopics((prev) => [...prev, topic]);
-        // If validation warning was showing, reset it now
-         if (topicMessage === validationWarningMessage) {
-             nextMessage = defaultMessage;
-         } else {
-             nextMessage = topicMessage === maxTopicsWarningMessage ? defaultMessage : topicMessage; // Reset if max warning was showing
-         }
+        // Clear any warning message when adding a valid tag
+        nextMessage = '';
       } else {
         // Limit reached
         nextMessage = maxTopicsWarningMessage;
@@ -110,6 +102,21 @@ export default function PreferencesPage() {
         setTimeout(() => setAnimateMessage('visible'), 400);
       }
     }
+    // If the validation warning was previously shown, ensure it's cleared now
+    if (topicMessage === validationWarningMessage && selectedTopics.length > 0) {
+       nextMessage = '';
+    } else if (topicMessage === maxTopicsWarningMessage && selectedTopics.length < maxTopics && !isSelected) {
+        // If max warning was shown but now we are below max, clear it
+        nextMessage = '';
+    } else if (topicMessage === maxTopicsWarningMessage && isSelected) {
+         // If removing a tag while max warning is shown, clear it
+         nextMessage = '';
+    } else if (topicMessage === maxTopicsWarningMessage && !isSelected && selectedTopics.length >= maxTopics) {
+        // If trying to add beyond max, keep the max message
+        nextMessage = maxTopicsWarningMessage;
+    }
+
+
      setTopicMessage(nextMessage);
      setAnimateMessage(nextAnimation);
   };
@@ -121,18 +128,27 @@ export default function PreferencesPage() {
    const handleSubmit = () => {
      // Check if any tags are selected
      if (selectedTopics.length === 0) {
-         setTopicMessage(validationWarningMessage);
+         setTopicMessage(validationWarningMessage); // Show validation warning
          setAnimateMessage('warning'); // Use specific warning animation
          // Reset animation state after a short delay
          setTimeout(() => setAnimateMessage('visible'), 600);
          return; // Prevent navigation
      }
 
-     // If validation passes, proceed
+     // If validation passes, clear message and proceed
+     setTopicMessage(''); // Clear message on successful submit
      console.log("Selected Topics:", selectedTopics);
      console.log("Selected Reading Time:", readingTime);
      router.push('/articles');
    };
+
+    // Effect to clear validation warning if user selects a tag after seeing it
+    useEffect(() => {
+        if (selectedTopics.length > 0 && topicMessage === validationWarningMessage) {
+            setTopicMessage('');
+        }
+    }, [selectedTopics, topicMessage]);
+
 
   return (
     <motion.div
@@ -208,23 +224,25 @@ export default function PreferencesPage() {
                     </CardTitle>
                     {/* Dynamic Message Area */}
                     <AnimatePresence mode="wait">
-                         <motion.p
-                             key={topicMessage} // Key ensures re-animation on message change
-                             className={cn(
-                                 "text-sm mt-3 font-medium min-h-[20px]", // Added min-height to prevent layout shift
-                                 topicMessage === validationWarningMessage || topicMessage === maxTopicsWarningMessage
-                                     ? "text-destructive font-semibold" // Red and bold for warnings
-                                     : "text-accent-pink dark:text-secondary" // Accent color for normal message
-                             )}
-                             variants={messageVariants}
-                             initial="hidden"
-                             animate={animateMessage} // Use state for animation control
-                             exit="exit"
-                         >
-                             {topicMessage === maxTopicsWarningMessage && <AlertCircle className="inline w-4 h-4 mr-1.5 mb-0.5" />}
-                             {topicMessage === validationWarningMessage && <Wand2 className="inline w-4 h-4 mr-1.5 mb-0.5" />}
-                             {topicMessage}
-                         </motion.p>
+                         {topicMessage && ( // Only render if topicMessage is not empty
+                             <motion.p
+                                 key={topicMessage} // Key ensures re-animation on message change
+                                 className={cn(
+                                     "text-sm mt-3 font-medium min-h-[20px]", // Added min-height to prevent layout shift
+                                     topicMessage === validationWarningMessage || topicMessage === maxTopicsWarningMessage
+                                         ? "text-destructive font-semibold" // Red and bold for warnings
+                                         : "text-accent-pink dark:text-secondary" // Default (shouldn't be used now)
+                                 )}
+                                 variants={messageVariants}
+                                 initial="hidden"
+                                 animate={animateMessage} // Use state for animation control
+                                 exit="exit"
+                             >
+                                 {topicMessage === maxTopicsWarningMessage && <AlertCircle className="inline w-4 h-4 mr-1.5 mb-0.5" />}
+                                 {topicMessage === validationWarningMessage && <Wand2 className="inline w-4 h-4 mr-1.5 mb-0.5" />}
+                                 {topicMessage}
+                             </motion.p>
+                         )}
                     </AnimatePresence>
                 </CardHeader>
                 <CardContent className="pt-0"> {/* Adjusted padding top */}
@@ -319,3 +337,4 @@ export default function PreferencesPage() {
     </motion.div>
   );
 }
+
