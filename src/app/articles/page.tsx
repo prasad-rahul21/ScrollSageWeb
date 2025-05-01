@@ -53,7 +53,7 @@ export default function ArticlesGridPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Newspaper className="w-8 h-8 text-primary" /> Your Curated Articles
+        <Newspaper className="w-8 h-8 text-primary" /> Handpicked Reads, Just for You ✨
       </motion.h1>
 
       {articles.length === 0 ? (
