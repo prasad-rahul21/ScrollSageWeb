@@ -7,8 +7,14 @@ import { useRouter } from 'next/navigation';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RippleButton } from '@/components/ui/ripple-button';
-import { Rocket, Sparkles, BookOpen, BrainCircuit, Timer, Settings, AlertCircle } from 'lucide-react'; // Added Settings & AlertCircle
+import { Rocket, Sparkles, BookOpen, BrainCircuit, Timer, Settings, AlertCircle, Wand2 } from 'lucide-react'; // Added Settings, AlertCircle, Wand2
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"; // Import Tooltip components
 
 const topics = [
   "Technology", "Science", "Health", "Business", "Culture", "Politics", "Sports", "Travel", "Food", "Art"
@@ -53,38 +59,59 @@ const messageVariants = {
     shake: { // Optional shake animation
         x: [0, -5, 5, -5, 5, 0],
         transition: { duration: 0.4, ease: "easeInOut" }
+    },
+    warning: { // Specific variant for validation warning
+        opacity: 1, y: 0, scale: 1,
+        x: [0, -4, 4, -4, 4, 0], // Shake effect
+        transition: { duration: 0.5, ease: "easeInOut" }
     }
 };
 
+const defaultMessage = "Your scroll-fate awaits... choose wisely, wanderer 🧙‍♂️";
+const validationWarningMessage = "Your scroll-fate awaits... choose at least one magical tag, wanderer! 🧙‍♂️";
+const maxTopicsWarningMessage = "Whoa there, overachiever! Only 3 passions allowed 😎";
 
 export default function PreferencesPage() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [readingTime, setReadingTime] = useState<number>(5);
   const router = useRouter();
-  const [topicMessage, setTopicMessage] = useState<string>("Your scroll-fate awaits... choose wisely, wanderer 🧙‍♂️");
+  const [topicMessage, setTopicMessage] = useState<string>(defaultMessage);
   const [animateMessage, setAnimateMessage] = useState<string>('visible'); // For triggering animation
+  const isSubmitDisabled = selectedTopics.length === 0;
 
   const handleTopicClick = (topic: string) => {
     const isSelected = selectedTopics.includes(topic);
     const maxTopics = 3;
+    let nextMessage = defaultMessage;
+    let nextAnimation = 'visible';
 
     if (isSelected) {
       setSelectedTopics((prev) => prev.filter((t) => t !== topic));
-      setTopicMessage("Your scroll-fate awaits... choose wisely, wanderer 🧙‍♂️"); // Reset message when deselecting
-      setAnimateMessage('visible'); // Reset animation state
+      // Message remains default unless validation was shown
+      if (topicMessage === validationWarningMessage || topicMessage === maxTopicsWarningMessage) {
+          nextMessage = defaultMessage;
+      } else {
+          nextMessage = topicMessage; // Keep current if it wasn't a warning
+      }
     } else {
       if (selectedTopics.length < maxTopics) {
         setSelectedTopics((prev) => [...prev, topic]);
-        setTopicMessage("Your scroll-fate awaits... choose wisely, wanderer 🧙‍♂️"); // Reset message if adding under limit
-        setAnimateMessage('visible'); // Reset animation state
+        // If validation warning was showing, reset it now
+         if (topicMessage === validationWarningMessage) {
+             nextMessage = defaultMessage;
+         } else {
+             nextMessage = topicMessage === maxTopicsWarningMessage ? defaultMessage : topicMessage; // Reset if max warning was showing
+         }
       } else {
         // Limit reached
-        setTopicMessage("Whoa there, overachiever! Only 3 passions allowed 😎");
-        setAnimateMessage('shake'); // Trigger shake animation
+        nextMessage = maxTopicsWarningMessage;
+        nextAnimation = 'shake'; // Trigger shake animation
         // Reset animation state after a short delay so it can be re-triggered
         setTimeout(() => setAnimateMessage('visible'), 400);
       }
     }
+     setTopicMessage(nextMessage);
+     setAnimateMessage(nextAnimation);
   };
 
   const handleSliderChange = (value: number[]) => {
@@ -92,10 +119,20 @@ export default function PreferencesPage() {
   };
 
    const handleSubmit = () => {
-    console.log("Selected Topics:", selectedTopics);
-    console.log("Selected Reading Time:", readingTime);
-    router.push('/articles');
-  };
+     // Check if any tags are selected
+     if (selectedTopics.length === 0) {
+         setTopicMessage(validationWarningMessage);
+         setAnimateMessage('warning'); // Use specific warning animation
+         // Reset animation state after a short delay
+         setTimeout(() => setAnimateMessage('visible'), 600);
+         return; // Prevent navigation
+     }
+
+     // If validation passes, proceed
+     console.log("Selected Topics:", selectedTopics);
+     console.log("Selected Reading Time:", readingTime);
+     router.push('/articles');
+   };
 
   return (
     <motion.div
@@ -174,17 +211,18 @@ export default function PreferencesPage() {
                          <motion.p
                              key={topicMessage} // Key ensures re-animation on message change
                              className={cn(
-                                 "text-sm mt-3 font-medium", // Adjusted margin top
-                                 selectedTopics.length >= 3 && !selectedTopics.includes('') // Example condition for warning color
-                                     ? "text-destructive" // Use destructive color for warning
-                                     : "text-accent-pink dark:text-secondary" // Use accent color for normal message
+                                 "text-sm mt-3 font-medium min-h-[20px]", // Added min-height to prevent layout shift
+                                 topicMessage === validationWarningMessage || topicMessage === maxTopicsWarningMessage
+                                     ? "text-destructive font-semibold" // Red and bold for warnings
+                                     : "text-accent-pink dark:text-secondary" // Accent color for normal message
                              )}
                              variants={messageVariants}
                              initial="hidden"
                              animate={animateMessage} // Use state for animation control
                              exit="exit"
                          >
-                             {topicMessage.includes("overachiever") && <AlertCircle className="inline w-4 h-4 mr-1.5 mb-0.5" />} {/* Add icon for warning */}
+                             {topicMessage === maxTopicsWarningMessage && <AlertCircle className="inline w-4 h-4 mr-1.5 mb-0.5" />}
+                             {topicMessage === validationWarningMessage && <Wand2 className="inline w-4 h-4 mr-1.5 mb-0.5" />}
                              {topicMessage}
                          </motion.p>
                     </AnimatePresence>
@@ -247,16 +285,34 @@ export default function PreferencesPage() {
             className="mt-8 text-center w-full"
             variants={sectionVariants}
         >
-            <RippleButton
-                onClick={handleSubmit}
-                className="btn-gradient px-8 py-3 rounded-full text-lg font-semibold shadow-lg inline-flex items-center gap-2"
-                whileHover={{ scale: 1.05, y: -3, transition: { type: 'spring', stiffness: 300, damping: 10 } }}
-                whileTap={{ scale: 0.98 }}
-            >
-                 <Rocket className="w-5 h-5" />
-                  Unlock Your Feed!
-                 <Sparkles className="w-5 h-5" />
-            </RippleButton>
+            <TooltipProvider>
+              <Tooltip open={isSubmitDisabled ? undefined : false}> {/* Control tooltip visibility */}
+                  <TooltipTrigger asChild>
+                       <div className={cn(isSubmitDisabled && "cursor-not-allowed")}> {/* Wrapper for tooltip trigger when disabled */}
+                           <RippleButton
+                               onClick={handleSubmit}
+                               className={cn(
+                                   "btn-gradient px-8 py-3 rounded-full text-lg font-semibold shadow-lg inline-flex items-center gap-2",
+                                   isSubmitDisabled && "opacity-50 cursor-not-allowed pointer-events-none" // Disable styles
+                               )}
+                               whileHover={!isSubmitDisabled ? { scale: 1.05, y: -3, transition: { type: 'spring', stiffness: 300, damping: 10 } } : {}}
+                               whileTap={!isSubmitDisabled ? { scale: 0.98 } : {}}
+                               disabled={isSubmitDisabled} // Actual disabled attribute
+                               aria-disabled={isSubmitDisabled}
+                           >
+                               <Rocket className="w-5 h-5" />
+                               Unlock Your Feed!
+                               <Sparkles className="w-5 h-5" />
+                           </RippleButton>
+                       </div>
+                  </TooltipTrigger>
+                 {isSubmitDisabled && (
+                    <TooltipContent side="bottom">
+                        <p>Pick a tag to proceed 🧠</p>
+                    </TooltipContent>
+                 )}
+              </Tooltip>
+            </TooltipProvider>
          </motion.div>
 
       </div>
